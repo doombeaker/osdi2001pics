@@ -262,6 +262,8 @@ add(LineDownCurve(f21, b21));
 add(LineDownCurve(f22, b22));
 
 // r2 to f12
+path r2Tof12 = point(r2, N){up}.. tension 3 ..{up}point(f12_, S);
+draw(r2Tof12, Arrow);
 path r2Tof12 = point(r2, S){down}.. tension 3 ..{down}point(f12__, N);
 draw(r2Tof12, Arrow);
 
@@ -272,4 +274,3 @@ draw(leftLine1, Arrow);
 path leftLine2 = point(f12__, E)--shift(shiftscale)*point(f12__, E);
 draw(leftLine2, Arrow);
 
-shipout(bbox(0.25cm));
