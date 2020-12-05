@@ -1,14 +1,190 @@
 import math;
+import graph;
 
 size(80cm, 25cm);
 unitsize(30, 0);
 defaultpen(fontsize(12pt));
 
+real shiftunit = 3.5;
+pen fillpen = rgb(156,194,230);
+real ypadding = 0.8shiftunit;
+
 //circle radius
 real rsize = 0.4;
 real shiftscale = 1.4;
-real shiftunit = 4.5;
-pen fillpen = rgb(156,194,230);
+
+picture getContextBox(pair pos=(0,0), pen p= currentpen)
+{
+    picture pic;
+    real boxwidth = 2.5;
+    real boxheight = 0.618*boxwidth;
+    path boxpath = box((0,0), (boxwidth, boxheight));
+    draw(pic, boxpath, p);
+    return shift(pos)*pic;
+}
+
+picture getActorBox(pair pos=(0,0), real width = 2.5, real height = width*0.618, pen p= currentpen)
+{
+    picture pic;
+    path boxpath = box((0,0), (width, height));
+    draw(pic, boxpath, p);
+    return shift(pos)*pic;
+}
+
+picture getCenterNode(picture box00, picture box01, picture box10, picture box11)
+{
+    picture pic;
+    pair ptcenter = midpoint(point(box00, E)--point(box01, W)--point(box10, E)--point(box11, W));
+
+    path connectellipse = ellipse(ptcenter, 0.8, 0.4);
+    draw(pic, connectellipse);
+    return pic;
+}
+
+picture drawBlocksInBox(picture boxpic)
+{
+    picture pic;
+    pair ptLeftDown = min(boxpic);
+    pair ptRightUp = max(boxpic);
+    pair weightHeight = size(boxpic);
+    
+    real edgeLeftUp = ptLeftDown.x +0.1;
+    real edgeWidth = weightHeight.x/2*0.9;
+    real itemUnit = edgeWidth / 4.5;
+    real squreUnit = 0.8*itemUnit;
+    
+    //blocks
+    path block;
+    for(int row = 0; row < 5; ++row)
+    {
+        for(int col = 0; col < 4; ++col)
+        {
+            block = scale(squreUnit)*unitsquare;
+            block = shift(itemUnit*col, itemUnit*row)*block;
+            fill(pic, block, lightgray);
+        }        
+    }
+
+    return shift(ptLeftDown + (edgeWidth*1.13, 0.94*itemUnit))*pic;
+}
+
+picture drawThreadsInBox(picture boxpic)
+{
+    picture pic;
+    pair ptLeftDown = min(boxpic);
+    pair ptRightUp = max(boxpic);
+    pair weightHeight = size(boxpic);
+
+    real itemUnit = weightHeight.x/5;
+    
+    real f(real x) {return 0.2sin(5x);}
+    // pair F(real x) {return (x,f(x));}
+    guide mypath = rotate(90)*scale(0.3)*graph(f,0,4,operator ..);
+    mypath = shift(ptLeftDown+(0.6itemUnit, 0.7itemUnit))*mypath;
+    draw(pic, mypath);
+
+    for(int i = 0; i < 4; ++i)
+    {
+        mypath = shift(itemUnit/2.5, 0)*mypath;
+        draw(pic, mypath);
+    }
+    return pic;
+}
+
+picture getClusterPic()
+{
+    picture mainPic;
+    size(mainPic, 40cm, 25cm);
+    unitsize(mainPic, 30, 0);
+
+    picture box00 = getContextBox((0, 0));
+    picture box01 = getContextBox((shiftunit, 0));
+    picture box10 = getContextBox((0, -ypadding));
+    picture box11 = getContextBox((shiftunit, -ypadding));
+    add(mainPic, box00);
+    add(mainPic, box01);
+    add(mainPic, box10);
+    add(mainPic, box11);
+
+    picture picEllipse = getCenterNode(box00, box01, box10, box11);
+    add(mainPic, picEllipse);
+
+    pair ptcenter = midpoint(point(box00, E)--point(box01, W)--point(box10, E)--point(box11, W));
+    path pth00 = point(box00, S){down}.. tension 3 ..{right}ptcenter;
+    path pth01 = point(box01, S){down}.. tension 3 ..{left}ptcenter;
+    path pth10 = point(box10, N){up}.. tension 3 ..{right}ptcenter;
+    path pth11 = point(box11, N){up}.. tension 3 ..{left}ptcenter;
+
+    draw(mainPic, pth00, Arrows);
+    draw(mainPic, pth01, Arrows);
+    draw(mainPic, pth10, Arrows);
+    draw(mainPic, pth11, Arrows);
+
+
+    add(mainPic, drawBlocksInBox(box00));
+    add(mainPic, drawBlocksInBox(box01));
+    add(mainPic, drawBlocksInBox(box10));
+    add(mainPic, drawBlocksInBox(box11));
+
+    add(mainPic, drawThreadsInBox(box00));
+    add(mainPic, drawThreadsInBox(box01));
+    add(mainPic, drawThreadsInBox(box10));
+    add(mainPic, drawThreadsInBox(box11));
+    return mainPic;
+}
+
+picture getCircle(string s, pair pos, pen p = defaultpen)
+{
+    picture pic;
+    path pt_circle = circle(pos, rsize);
+    draw(pic, pt_circle, p);
+    label(pic, s, pos);
+    return pic;
+}
+
+picture LineLeft2Rgiht(picture nodeLeft, picture nodeRight)
+{
+    picture pic;
+    path l2r = point(nodeLeft, E){right}..{right}point(nodeRight, W);
+    draw(pic, l2r, Arrow);
+    return pic;
+}
+
+picture LineUp2Down(picture nodeUp, picture nodeDown)
+{
+    picture pic;
+    path pth = point(nodeUp, S){down}..{down}point(nodeDown, N);
+    draw(pic, pth, Arrow);
+    return pic;
+}
+
+picture LineRight2Left(picture nodeRight, picture nodeLeft)
+{
+    picture pic;
+    path pth = point(nodeRight, W){left}..{left}point(nodeLeft, E);
+    draw(pic, pth, Arrow);
+    return pic;
+}
+
+picture getLogicalPic()
+{
+    picture logicalPic;
+    size(logicalPic, 40cm, 25cm);
+    unitsize(logicalPic, 30, 0);
+
+    picture f1= getCircle("$f_1$", (0,0));
+    add(logicalPic, f1);
+
+    picture f2= getCircle("$f_2$", (shiftunit,0));
+    add(logicalPic, f2);
+
+    picture f3= getCircle("$f_3$", (2shiftunit,0));
+    add(logicalPic, f3);
+
+    add(logicalPic, LineLeft2Rgiht(f1, f2));
+    add(logicalPic, LineLeft2Rgiht(f2, f3));
+    return logicalPic;
+}
 
 picture getCircle(string s, pair pos, pen p = defaultpen)
 {
@@ -122,6 +298,9 @@ picture LineDownCurve(picture nodeLeft, picture nodeRight, int tvalue=5)
 picture getPlacementPic()
 {
     picture placementPic;
+    size(placementPic, 80cm, 25cm);
+    unitsize(placementPic, 30, 0);
+
     picture boxpic00 = shift(0, 0)*getRectBox("$d_1$", false);
     picture boxpic01 = shift(1shiftunit, 0)*getRectBox("$d_3$", false);
     picture boxpic02 = shift(2shiftunit, 0)*getRectBox("$d_1$", false);
@@ -280,7 +459,59 @@ picture getPlacementPic()
     return placementPic;
 }
 
-picture placementPic = getPlacementPic();
+picture getActorCircle(string s, pair pos, real r, pen p=defaultpen)
+{
+    picture pic;
+    path pt_circle = circle(pos, r);
+    draw(pic, pt_circle, p);
+    label(pic, s, pos, fontsize(22pt));
+    return pic;
+}
+
+picture getActorsPic()
+{
+    picture actorsPic;
+    size(actorsPic, 80cm, 0);
+    unitsize(actorsPic, 30);
+    picture box0 = getActorBox((0, 0), 10, 4);
+    //picture box1 = getActorBox((12, 0), 10, 4);
+    pair ptLeft = point(box0, W);
+    real movepadd = 3.2;
+    real r = 1.5;
+    picture actor1 = getActorCircle("$actor_1$", shift(1.8,0)*ptLeft, r);
+    picture actor2 = getActorCircle("$actor_2$", shift(1.8+movepadd,0)*ptLeft, r);
+    picture actor3 = getActorCircle("$actor_3$", shift(1.8+2movepadd,0)*ptLeft, r);
+    picture picleft;
+
+    add(picleft, box0);
+    add(picleft, actor1);
+    add(picleft, actor2);
+    add(picleft, actor3);
+
+    add(actorsPic, picleft);
+    add(actorsPic, shift(11, 0)*picleft);
+    return actorsPic;
+}
+
+
+picture logicalPic = shift(-4,-1)*getLogicalPic();
+picture clusterPic = shift(6,0)*getClusterPic();
+add(logicalPic);
+add(clusterPic);
+
+label("logical graph", point(clusterPic, S), down);
+label("resource", (point(logicalPic, S).x, point(clusterPic, S).y), down);
+
+picture placementPic =shift(-3, -6)*getPlacementPic();
 add(placementPic);
+label("physical graph", point(placementPic, S), down);
+
+picture actorsPic = getActorsPic();
+actorsPic = scale(0.7)*actorsPic;
+actorsPic = shift(-3.5, -14)*actorsPic;
+add(actorsPic);
+
+//draw brackets
+
 
 
