@@ -1,0 +1,7 @@
+/examples
+*.png
+/.vscode
+clean.cmd
+/todolist
+/*.pdf
+*.eps
