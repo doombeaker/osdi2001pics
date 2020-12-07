@@ -508,27 +508,34 @@ draw(ptArrowBegin--shift(0, -1)*ptArrowBegin, p=defaultpen+2mm+lightgray, Arrow)
 
 picture placementPic =shift(-3, -6)*getPlacementPic();
 add(placementPic);
-label("physical graph", point(placementPic, S), down);
+label("actor system instantiated from the physical graph", point(placementPic, S), down);
 
-picture actorsPic = getActorsPic();
-actorsPic = scale(0.7)*actorsPic;
-actorsPic = shift(-3.5, -14)*actorsPic;
-add(actorsPic);
+// picture actorsPic = getActorsPic();
+// actorsPic = scale(0.7)*actorsPic;
+// actorsPic = shift(-3.5, -14)*actorsPic;
+// add(actorsPic);
 
 //draw brackets
 pair ptUp0 = (min(logicalPic, true).x-0.3, max(clusterPic, true).y);
-pair ptDown0 =  (min(logicalPic, true).x-0.3, min(placementPic, true).y);
-pair ptCross0 = shift(-0.7, 0)*midpoint(ptUp0--ptDown0);
+pair ptDown0 =  (min(logicalPic, true).x-0.3, max(placementPic, true).y);
+pair ptCross0 = shift(-0.4, 0)*midpoint(ptUp0--ptDown0);
 draw(ptUp0{left}.. tension 5 ..{left}ptCross0);
 draw(ptDown0{left}.. tension 5 ..{left}ptCross0);
 
+transform tshift = shift(0, -0.1);
+pair ptUp1 = tshift*(ptUp0.x, max(placementPic, true).y);
+pair ptDown1 =  tshift*(ptUp0.x, min(placementPic, true).y);
+pair ptCross1 = tshift*(ptCross0.x, (shift(-0.3, 0)*midpoint(ptUp1--ptDown1)).y);
+draw(ptUp1{left}.. tension 5 ..{left}ptCross1);
+draw(ptDown1{left}.. tension 5 ..{left}ptCross1);
 
-transform tshift = shift(-0.8, 0);
-pair ptUp1 = tshift*(min(actorsPic, true).x-0.3, max(actorsPic, true).y);
-pair ptDown1 =  tshift*(min(actorsPic, true).x-0.3, min(actorsPic, true).y);
-pair ptCross1 = (ptCross0.x, (shift(-0.7, 0)*midpoint(ptUp1--ptDown1)).y );
-draw(ptUp1{left}.. tension 1 ..{left}ptCross1);
-draw(ptDown1{left}.. tension 1 ..{left}ptCross1);
+
+// transform tshift = shift(-0.8, 0);
+// pair ptUp1 = tshift*(min(actorsPic, true).x-0.3, max(actorsPic, true).y);
+// pair ptDown1 =  tshift*(min(actorsPic, true).x-0.3, min(actorsPic, true).y);
+// pair ptCross1 = (ptCross0.x, (shift(-0.7, 0)*midpoint(ptUp1--ptDown1)).y );
+// draw(ptUp1{left}.. tension 1 ..{left}ptCross1);
+// draw(ptDown1{left}.. tension 1 ..{left}ptCross1);
 
 label("compiler", ptCross0, left);
 label("runtime", ptCross1, left);
