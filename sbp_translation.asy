@@ -5,6 +5,7 @@ defaultpen(fontsize(12pt));
 
 real rsize = 0.7;
 real shiftUnit = 3;
+pen fillblockpen = rgb(156,194,230);
 
 picture getCircle(string s, pair pos, pen p = white)
 {
@@ -57,7 +58,7 @@ picture getLogicalPic()
     //draw lines
     path A0ToMat0 = point(A0, E){right}..{right}point(MatMul0, W);
     path B0ToMat0 = point(B0, W){left}..{left}point(MatMul0, E);
-    path Mat0ToY0 = point(MatMul0, S){down}.. tension 2 ..{down}point(Y0, N);
+    path Mat0ToY0 = point(MatMul0, S){down}.. tension 3 ..{down}point(Y0, N);
     path Y0ToMat1 = point(Y0, S){down}..{right}point(MatMul1, W);
     path B1ToMat1 = point(B1, S){down}..{left}point(MatMul1, E);
     path Mat1ToY1 = point(MatMul1, S){down}..{down}point(Y1, N);
@@ -81,7 +82,7 @@ picture getLogicalPic()
     return pic;
 }
 
-void fillBoxUp(picture boxPic, pen p=lightgray)
+void fillBoxUp(picture boxPic, pen p=fillblockpen)
 {
     pair ptLeftBottom = point(boxPic, W);
     pair ptRightBottom = point(boxPic, E);
@@ -91,7 +92,7 @@ void fillBoxUp(picture boxPic, pen p=lightgray)
     filldraw(boxPic, upRect, p);
 }
 
-void fillBoxDown(picture boxPic, pen p=lightgray)
+void fillBoxDown(picture boxPic, pen p=fillblockpen)
 {
     pair ptLeftBottom = point(boxPic, SW);
     pair ptRightBottom = point(boxPic, SE);
@@ -101,7 +102,7 @@ void fillBoxDown(picture boxPic, pen p=lightgray)
     filldraw(boxPic, upRect, p);
 }
 
-void fillBoxLeft(picture boxPic, pen p=lightgray)
+void fillBoxLeft(picture boxPic, pen p=fillblockpen)
 {
     pair ptLeftBottom = point(boxPic, SW);
     pair ptRightBottom = midpoint(point(boxPic, SW)--point(boxPic, SE));
@@ -111,7 +112,7 @@ void fillBoxLeft(picture boxPic, pen p=lightgray)
     filldraw(boxPic, upRect, p);
 }
 
-void fillBoxRight(picture boxPic, pen p=lightgray)
+void fillBoxRight(picture boxPic, pen p=fillblockpen)
 {
     pair ptLeftBottom = midpoint(point(boxPic, SW)--point(boxPic, SE));
     pair ptRightBottom = point(boxPic, SE);
