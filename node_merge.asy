@@ -314,3 +314,6 @@ picture nodes2Pic = shift(picShiftUnit, 0)*getNodes2Picture();
 add(nodes2Pic);
 picture nodes3Pic = shift(3.5picShiftUnit, 0)*getNodes3Picture();
 add(nodes3Pic);
+
+label("or", midpoint(point(nodes1Pic, E)--point(nodes2Pic, W)));
+draw(point(nodes2Pic, E)--point(nodes3Pic, W), Arrow);
