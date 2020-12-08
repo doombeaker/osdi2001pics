@@ -27,8 +27,8 @@ picture getRect(string s="", pair z=(0,0), real w=1.2, real h = 1.2,pen p = whit
 picture getLogicalPic()
 {
     picture pic;
-    size(pic, 40cm, 0);
-    unitsize(pic, 30, 0);
+    size(pic, 0, 40cm);
+    unitsize(pic, 0, 30);
 
     real xshiftUnit = 1.5shiftUnit;
     real yshiftUnit = -0.52shiftUnit;
@@ -44,7 +44,7 @@ picture getLogicalPic()
     add(pic, MatMul0);
 
 
-    transform shiftRightDown = shift(xshiftUnit, 2*yshiftUnit);
+    transform shiftRightDown = shift(0.5xshiftUnit, 3.5*yshiftUnit);
     picture Y0 = shiftRightDown*getRect("$Y_0$");
     picture B1 = shiftRightDown*getRect("$B_1$", (xshiftUnit, 0));
     picture MatMul1 = shiftRightDown*getCircle("$MatMul_1$", (xOfCirclePt, yshiftUnit));
@@ -71,9 +71,9 @@ picture getLogicalPic()
     draw(pic, Mat1ToY1, Arrow);
 
     // box it and label
-    pair centerOfPic = midpoint(point(Y0, W)--point(Y0,E));
-    real boxWidth = 2.89shiftUnit;
-    real boxHeight = 1.5shiftUnit;
+    pair centerOfPic = shift(0, 0.5yshiftUnit)*(midpoint(point(Y0, S)--point(MatMul1, N)).x, midpoint(point(Y0, N)--point(MatMul0, S)).y);
+    real boxWidth = 1.4shiftUnit;
+    real boxHeight = 2.1shiftUnit;
     pair leftBottom = shift(-boxWidth, -boxHeight)*centerOfPic;
     pair rightUp = shift(boxWidth, boxHeight)*centerOfPic;
     label(pic, "Logical View", leftBottom, 2NE);
@@ -125,14 +125,14 @@ void fillBoxRight(picture boxPic, pen p=fillblockpen)
 picture getBoxPic()
 {
     picture pic;
-    size(pic, 40cm, 0);
-    unitsize(pic, 30, 0);
+    size(pic, 0, 40cm);
+    unitsize(pic, 0, 30);
 
     real xshiftUnit = 1.5shiftUnit;
     real yshiftUnit = -0.52shiftUnit;
 
 // background box
-    pair ptLeftBottom = (-0.55xshiftUnit, 7.5yshiftUnit);
+    pair ptLeftBottom = (-0.55xshiftUnit, 7.6yshiftUnit);
     pair ptRightUp = (1.3xshiftUnit, -0.5yshiftUnit);
     path bgBox0 = box(ptLeftBottom, ptRightUp);
     path bgBox1 = shift(2xshiftUnit, 0)*bgBox0;
@@ -192,7 +192,7 @@ picture getBoxPic()
 //------boxing rect
     pair boxingPos = shift(-0.12xshiftUnit, 1.5yshiftUnit)*midpoint(point(dev0_Y0, E)--point(dev1_Y0,W));
     //dot(pic, boxingPos);
-    picture theBoxNode = getRect("Boxing", boxingPos, 2.5, 0.7);
+    picture theBoxNode = getRect("Boxing", boxingPos, 2.5, 0.75);
     add(pic, theBoxNode);
 
  // ------- lines in layer 1(mat0 to boxing)
@@ -286,7 +286,7 @@ picture getBoxPic()
 }
 
 picture logicalPic = getLogicalPic();
-add(logicalPic.fit(), (0,0), N);
+add(logicalPic.fit(), (0,0), E);
 
 picture boxPic = getBoxPic();
-add(boxPic.fit(), (0,0), 10S);
+add(boxPic.fit(), (0,0), 10W);
