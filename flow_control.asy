@@ -29,7 +29,7 @@ picture getTime1Pic()
     unitsize(mainPic, 30, 0);
 
     real xshiftunit = 2shiftUnit;
-    real yshiftunit = -2shiftUnit;
+    real yshiftunit = -shiftUnit;
 
     picture actor1 = getCircle("$actor_1$", (-1.3xshiftunit, yshiftunit));
     add(mainPic, actor1);
@@ -74,7 +74,7 @@ picture getTime2Pic()
     unitsize(mainPic, 30, 0);
 
     real xshiftunit = 2shiftUnit;
-    real yshiftunit = -2shiftUnit;
+    real yshiftunit = -shiftUnit;
 
     picture actor1 = getCircle("$actor_1$", (-1.3xshiftunit, yshiftunit));
     add(mainPic, actor1);
@@ -123,7 +123,7 @@ picture getTime3Pic()
     unitsize(mainPic, 30, 0);
 
     real xshiftunit = 2shiftUnit;
-    real yshiftunit = -2shiftUnit;
+    real yshiftunit = -shiftUnit;
 
     picture actor1 = getCircle("$actor_1$", (-1.3xshiftunit, yshiftunit));
     add(mainPic, actor1);
@@ -169,7 +169,7 @@ picture getTime3Pic()
     return mainPic;
 }
 
-real picshiftunit = 5.7;
+real picshiftunit = 3.7;
 picture pic1 = shift(0, picshiftunit)*getTime1Pic();
 add(pic1);
 
