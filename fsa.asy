@@ -1,6 +1,6 @@
 size(20cm, 0);
 unitsize(20, 0);
-defaultpen(fontsize(12pt));
+defaultpen(fontsize(13pt));
 
 real shiftSizeUnit = 7;
 
@@ -13,7 +13,7 @@ picture fillEllipse(path pthEllipse, string s="", real pagewidth = 50pt, pen p=w
     return pic;
 }
 
-path genEllipse(pair pos=(0,0), real a=2, real b = 1)
+path genEllipse(pair pos=(0,0), real a=2.5, real b = 1.3)
 {
     return ellipse(pos, a, b);
 }
@@ -52,10 +52,10 @@ pair ptOutInReadyLeftDwon = intersectionpoint(nodeOutInReady, ptOutInReady--(ptO
 picture startPic = fillEllipse(nodeStart, "\quad start", lightgray);
 add(startPic);
 
-picture outReadyPic = fillEllipse(nodeOutReady, "\emph{out} ready", lightgray);
+picture outReadyPic = fillEllipse(nodeOutReady, "\emph{out}\\available", lightgray);
 add(outReadyPic);
 
-picture outInReadyPic = fillEllipse(nodeOutInReady, "\emph{out} ready \emph{in} ready", lightgray);
+picture outInReadyPic = fillEllipse(nodeOutInReady, "\emph{out} available\\\emph{in} available", 70pt, lightgray);
 add(outInReadyPic);
 
 picture noOutInPic = fillEllipse(nodeNoOutIn, "no \emph{out}\\ no \emph{in}", 35pt, lightgray);
@@ -64,7 +64,7 @@ add(noOutInPic);
 picture runningPic = fillEllipse(nodeRunning, "\quad running", 70pt);
 add(runningPic);
 
-picture inReadyPic = fillEllipse(nodeInReady, "\emph{in} ready", lightgray);
+picture inReadyPic = fillEllipse(nodeInReady, "\emph{in}\\available", lightgray);
 add(inReadyPic);
 
 picture curvePic0 = drawCurveDonw2Up("on \emph{req} msg", ptNoOutInRightUp, ptInReadyLeftDwon, SE);

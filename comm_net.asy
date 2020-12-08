@@ -40,7 +40,7 @@ real shiftUnit = 5;
 picture actor1 = getCircle("$actor_1$", 15);
 add(actor1);
 
-picture commNet = shift(shiftUnit, 0)*getCircle("$comm_{net}$", 15);
+picture commNet = shift(shiftUnit, 0)*getCircle("$comm\_net$", 15);
 add(commNet);
 
 picture actor2 = shift(2shiftUnit, 0)*getCircle("$actor_2$", 15);
