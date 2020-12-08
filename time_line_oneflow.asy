@@ -170,29 +170,26 @@ picture getMainPic()
     picture train_batch1 = shift(ptTrainBatch1)*getBatch(trainWidth, Dotted, gray);
     add(pic, train_batch1);
 
-    //dataloader batch4, regs1 4
-    picture data_batch4 = shift(point(data_batch3, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
-    add(pic, data_batch4);
-
     picture reg1_04 = shift(tinyPadding,0)*getRegAlignToUpBatchRight(data_batch3, yaxisShift);
     picture reg1_14 = shift(tinyPadding,0)*getRegAlignToUpBatchRight(data_batch3, yaxisShift-tinyPadding-boxd);
     add(pic, fillRegBox(reg1_04, fillBusy));
     add(pic, fillRegBox(reg1_14, fillReady));
 
-    //regs1 5
-    picture reg1_05 = shift(tinyPadding,0)*getRegAlignToUpBatchRight(data_batch4, yaxisShift);
-    picture reg1_15 = shift(tinyPadding,0)*getRegAlignToUpBatchRight(data_batch4, yaxisShift-tinyPadding-boxd);
-    add(pic, fillRegBox(reg1_05, fillBusy));
-    add(pic, fillRegBox(reg1_15, fillReady));    
 
-    //Dataloader batch 5 regs1 6
-    picture data_batch5 = shift(point(prepro_batch2, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
-    add(pic, data_batch5);
+    //Dataloader batch 4 regs1 5
+    picture data_batch4 = shift(point(prepro_batch2, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
+    add(pic, data_batch4);
     
-    picture reg1_06 = shift(point(prepro_batch2, E).x+tinyPadding, point(reg1_05, SW).y)*blockBox();
-    picture reg1_16 = shift(point(prepro_batch2, E).x+tinyPadding, point(reg1_15, SW).y)*blockBox();
-    add(pic, fillRegBox(reg1_06, fillReady));
-    add(pic, fillRegBox(reg1_16, fillBusy));
+    picture reg1_05 = shift(point(prepro_batch2, E).x+tinyPadding, point(reg1_01, SW).y)*blockBox();
+    picture reg1_15 = shift(point(prepro_batch2, E).x+tinyPadding, point(reg1_11, SW).y)*blockBox();
+    add(pic, fillRegBox(reg1_05, fillFree));
+    add(pic, fillRegBox(reg1_15, fillBusy));
+
+    //regs1 6
+    picture reg1_07 = shift(point(data_batch4, E).x+tinyPadding, point(reg1_01, SW).y)*blockBox();
+    picture reg1_17 = shift(point(data_batch4, E).x+tinyPadding, point(reg1_11, SW).y)*blockBox();
+    add(pic, fillRegBox(reg1_07, fillReady));
+    add(pic, fillRegBox(reg1_17, fillBusy));
 
     //preprocess batch 3, regs2 3
     picture prepro_batch3 = shift(point(prepro_batch2, E).x +tinyPadding, shiftYValue)*getBatch(preproWidth, dotted);
@@ -217,13 +214,13 @@ picture getMainPic()
     add(pic, fillRegBox(reg2_04, fillFree));
     add(pic, fillRegBox(reg2_14, fillFree));
 
-    //dataloader batch 6, regs 1 7      
-    picture data_batch6 = shift(point(prepro_batch3, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
-    add(pic, data_batch6);
-    picture reg1_07 = shift(point(data_batch6, W).x, point(reg1_05, SW).y)*blockBox();
-    picture reg1_17 = shift(point(data_batch6, W).x, point(reg1_15, SW).y)*blockBox();
+    //dataloader batch 5, regs 1 7      
+    picture data_batch5 = shift(point(prepro_batch3, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
+    add(pic, data_batch5);
+    picture reg1_07 = shift(point(data_batch5, W).x, point(reg1_01, SW).y)*blockBox();
+    picture reg1_17 = shift(point(data_batch5, W).x, point(reg1_11, SW).y)*blockBox();
     add(pic, fillRegBox(reg1_07, fillBusy));
-    add(pic, fillRegBox(reg1_17, fillReady));
+    add(pic, fillRegBox(reg1_17, fillFree));
 
     //preprocess batch 4
     picture prepro_batch4 = shift(point(prepro_batch3, E).x +tinyPadding, shiftYValue)*getBatch(preproWidth, dotted);
