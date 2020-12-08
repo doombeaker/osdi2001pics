@@ -8,7 +8,7 @@ pen fillReady = rgb(156,194,230);
 pen fillBusy = lightgray;
 pen fillFree = white;
 
-real tinyPadding = 0.1;
+real tinyPadding = 0.15;
 
 picture getBatch(real width, pen pstyle = defaultpen, pen pbg = lightgray)
 {
@@ -19,7 +19,7 @@ picture getBatch(real width, pen pstyle = defaultpen, pen pbg = lightgray)
     return pic;
 }
 
-picture blockBox(real w = 0.3, real h = 0.3, pen p = white) {
+picture blockBox(real w = 0.5, real h = 0.5, pen p = white) {
   picture pic;
   pair d = (w, h);
   path boxpath = box((0,0), d);
