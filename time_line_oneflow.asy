@@ -96,6 +96,8 @@ picture getMainPic()
     real boxd = 0.3;
     picture reg1_00 = getRegAlignToUpBatchLeft(data_batch1, yaxisShift);
     picture reg1_10 = getRegAlignToUpBatchLeft(data_batch1, yaxisShift-tinyPadding-boxd);
+    
+    //reg1 0
     add(pic, reg1_00);
     add(pic, reg1_10);
 
@@ -108,7 +110,7 @@ picture getMainPic()
     add(pic, reg1_01);
     add(pic, fillRegBox(reg1_11, fillBusy));
 
-    real preproWidth = 2.7*xshiftUnit;
+    real preproWidth = 2.8*xshiftUnit;
     real shiftYValue = -yshiftUnit;
     picture prepro_batch1 = shift(point(data_batch2, W).x, shiftYValue)*getBatch(preproWidth, dotted);
     add(pic, prepro_batch1);
@@ -131,8 +133,13 @@ picture getMainPic()
     picture prepro_batch2 = shift(point(data_batch3, W).x, shiftYValue)*getBatch(preproWidth, dotted);
     add(pic, prepro_batch2);
 
-    real copyWidth = 0.6*xshiftUnit;
+    real copyWidth = 0.7*xshiftUnit;
     real copyYValue =  -2*yshiftUnit;
+
+    add(pic, shift(0, -yshiftUnit)*reg1_00);
+    add(pic, shift(0, -yshiftUnit)*reg1_10);
+    add(pic, shift(0, -2yshiftUnit)*reg1_00);
+    add(pic, shift(0, -2yshiftUnit)*reg1_10);
     
     //copyh2d batch1, regs2 1
     pair ptCopyBase = (point(prepro_batch1, E).x+tinyPadding, copyYValue);
@@ -210,39 +217,53 @@ picture getMainPic()
     add(pic, fillRegBox(reg2_04, fillFree));
     add(pic, fillRegBox(reg2_14, fillFree));
 
-    // regs1 7
-
-    picture reg1_07 = shift(point(data_batch5, E).x+tinyPadding, point(reg1_05, SW).y)*blockBox();
-    picture reg1_17 = shift(point(data_batch5, E).x+tinyPadding, point(reg1_15, SW).y)*blockBox();
-    add(pic, fillRegBox(reg1_07, fillReady));
-    add(pic, fillRegBox(reg1_17, fillBusy)); 
-
-    //dataloader batch 6, regs 1 8      
+    //dataloader batch 6, regs 1 7      
     picture data_batch6 = shift(point(prepro_batch3, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
     add(pic, data_batch6);
-    picture reg1_08 = shift(point(data_batch6, W).x, point(reg1_05, SW).y)*blockBox();
-    picture reg1_18 = shift(point(data_batch6, W).x, point(reg1_15, SW).y)*blockBox();
-    add(pic, fillRegBox(reg1_08, fillBusy));
-    add(pic, fillRegBox(reg1_18, fillReady));
+    picture reg1_07 = shift(point(data_batch6, W).x, point(reg1_05, SW).y)*blockBox();
+    picture reg1_17 = shift(point(data_batch6, W).x, point(reg1_15, SW).y)*blockBox();
+    add(pic, fillRegBox(reg1_07, fillBusy));
+    add(pic, fillRegBox(reg1_17, fillReady));
 
     //preprocess batch 4
     picture prepro_batch4 = shift(point(prepro_batch3, E).x +tinyPadding, shiftYValue)*getBatch(preproWidth, dotted);
     add(pic, prepro_batch4);
 
-    //copyh2d batch3, regs 2 5
-    picture copyh2d_batch3 = shift((point(prepro_batch3, E).x+tinyPadding, point(copyh2d_batch1, S).y))*getBatch(copyWidth, solid, black);
-    add(pic, copyh2d_batch3);             
-    picture reg2_05 = shift(point(copyh2d_batch3, W).x, point(reg2_01, SW).y)*blockBox();
-    picture reg2_15 = shift(point(copyh2d_batch3, W).x, point(reg2_11, SW).y)*blockBox();;
+    //regs 2 5         
+    picture reg2_05 = shift((point(prepro_batch3, E).x+tinyPadding, point(reg2_01, SW).y))*blockBox();
+    picture reg2_15 = shift((point(prepro_batch3, E).x+tinyPadding, point(reg2_11, SW).y))*blockBox();;
     add(pic, fillRegBox(reg2_05, fillFree));
-    add(pic, fillRegBox(reg2_15, fillBusy));
+    add(pic, fillRegBox(reg2_15, fillReady));
 
-    //regs 2 6
-    picture reg2_06 = shift(point(copyh2d_batch3, E).x+tinyPadding, point(reg2_01, SW).y)*blockBox();
-    picture reg2_16 = shift(point(copyh2d_batch3, E).x+tinyPadding, point(reg2_11, SW).y)*blockBox();;
+    //train batch 2
+    picture train_batch2 = shift(point(train_batch1, E).x +tinyPadding, trainYValue)*xscale(0.6)*getBatch(trainWidth, Dotted, gray);
+    add(pic, train_batch2);
+
+    // copyh2d batch3 regs3 3
+    picture copyh2d_batch3 = shift((point(train_batch1, E).x+tinyPadding, point(copyh2d_batch1, S).y))*getBatch(copyWidth, solid, black);
+    add(pic, copyh2d_batch3);
+    picture reg3_03 = shift(point(copyh2d_batch3, W).x, point(reg3_01, SW).y)*blockBox();
+    picture reg3_13 = shift(point(copyh2d_batch3, W).x, point(reg3_11, SW).y)*blockBox();
+    add(pic, fillRegBox(reg3_03, fillBusy));
+    add(pic, fillRegBox(reg3_13, fillFree)); 
+
+    // regs2 6
+    picture reg2_06 = shift((point(copyh2d_batch3, W).x, point(reg2_01, SW).y))*blockBox();
+    picture reg2_16 = shift((point(copyh2d_batch3, W).x, point(reg2_11, SW).y))*blockBox();;
     add(pic, fillRegBox(reg2_06, fillFree));
-    add(pic, fillRegBox(reg2_16, fillFree));    
-    
+    add(pic, fillRegBox(reg2_16, fillBusy));
+
+    //regs3 4, regs2 7
+    picture reg3_04 = shift(point(copyh2d_batch3, E).x+tinyPadding, point(reg3_01, SW).y)*blockBox();
+    picture reg3_14 = shift(point(copyh2d_batch3, E).x+tinyPadding, point(reg3_11, SW).y)*blockBox();
+    add(pic, fillRegBox(reg3_04, fillBusy));
+    add(pic, fillRegBox(reg3_14, fillReady)); 
+
+    picture reg2_07 = shift((point(copyh2d_batch3, E).x+tinyPadding, point(reg2_01, SW).y))*blockBox();
+    picture reg2_17 = shift((point(copyh2d_batch3, E).x+tinyPadding, point(reg2_11, SW).y))*blockBox();;
+    add(pic, fillRegBox(reg2_07, fillFree));
+    add(pic, fillRegBox(reg2_17, fillFree));
+
     return pic;
 }
 
