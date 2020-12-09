@@ -87,6 +87,28 @@ picture fillRegBox(picture boxPic, pen p=fillFree)
     return boxPic;
 }
 
+picture drawLineBatch2Reg(picture batchPic, picture regPic)
+{
+    picture pic;
+    draw(pic, point(batchPic, E){down}..{right}point(regPic, W),Arrow);
+    return pic;
+}
+
+
+picture drawLineBottomReg2Batch(picture regPic, picture batchPic, real t=2)
+{
+    picture pic;
+    draw(pic, point(regPic, S){down}.. tension t ..{down}point(batchPic, N),Arrow);
+    return pic;
+}
+
+picture drawLineUpReg2Batch(picture regPic, picture batchPic)
+{
+    picture pic;
+    draw(pic, point(regPic, E){down}..{down}midpoint(point(regPic, E)--point(batchPic, N)){down}..{down}point(batchPic, N),Arrow);
+    return pic;
+}
+
 picture getMainPic()
 {
     picture pic;
@@ -189,10 +211,10 @@ picture getMainPic()
     add(pic, fillRegBox(reg1_15, fillBusy));
 
     //regs1 6
-    picture reg1_07 = shift(point(data_batch4, E).x+tinyPadding, point(reg1_01, SW).y)*blockBox();
-    picture reg1_17 = shift(point(data_batch4, E).x+tinyPadding, point(reg1_11, SW).y)*blockBox();
-    add(pic, fillRegBox(reg1_07, fillReady));
-    add(pic, fillRegBox(reg1_17, fillBusy));
+    picture reg1_06 = shift(point(data_batch4, E).x+tinyPadding, point(reg1_01, SW).y)*blockBox();
+    picture reg1_16 = shift(point(data_batch4, E).x+tinyPadding, point(reg1_11, SW).y)*blockBox();
+    add(pic, fillRegBox(reg1_06, fillReady));
+    add(pic, fillRegBox(reg1_16, fillBusy));
 
     //preprocess batch 3, regs2 3
     picture prepro_batch3 = shift(point(prepro_batch2, E).x +tinyPadding, shiftYValue)*getBatch(preproWidth, dotted);
@@ -217,13 +239,19 @@ picture getMainPic()
     add(pic, fillRegBox(reg2_04, fillFree));
     add(pic, fillRegBox(reg2_14, fillFree));
 
-    //dataloader batch 5, regs 1 7      
+    //dataloader batch 5, regs 1 7     
     picture data_batch5 = shift(point(prepro_batch3, E).x+tinyPadding, 0)*getBatch(batchWidthUnit); 
     add(pic, data_batch5);
     picture reg1_07 = shift(point(data_batch5, W).x, point(reg1_01, SW).y)*blockBox();
     picture reg1_17 = shift(point(data_batch5, W).x, point(reg1_11, SW).y)*blockBox();
     add(pic, fillRegBox(reg1_07, fillBusy));
     add(pic, fillRegBox(reg1_17, fillFree));
+
+    //regs 1 8
+    picture reg1_08 = shift(point(data_batch5, E).x+tinyPadding, point(reg1_01, SW).y)*blockBox();
+    picture reg1_18 = shift(point(data_batch5, E).x+tinyPadding, point(reg1_11, SW).y)*blockBox();
+    add(pic, fillRegBox(reg1_08, fillBusy));
+    add(pic, fillRegBox(reg1_18, fillReady));   
 
     //preprocess batch 4
     picture prepro_batch4 = shift(point(prepro_batch3, E).x +tinyPadding, shiftYValue)*getBatch(preproWidth, dotted);
@@ -264,6 +292,35 @@ picture getMainPic()
     add(pic, fillRegBox(reg2_07, fillFree));
     add(pic, fillRegBox(reg2_17, fillFree));
 
+    //lines reg1
+    add(pic, drawLineBatch2Reg(data_batch1, reg1_11));
+    add(pic, drawLineBottomReg2Batch(reg1_11, prepro_batch1));
+    add(pic, drawLineBatch2Reg(data_batch2, reg1_02));
+
+    add(pic, drawLineUpReg2Batch(reg1_03, prepro_batch2));
+    add(pic, drawLineBatch2Reg(data_batch3, reg1_04));
+    
+    add(pic, drawLineBottomReg2Batch(reg1_15, prepro_batch3));
+    add(pic, drawLineBatch2Reg(data_batch4, reg1_06));
+    
+    add(pic, drawLineUpReg2Batch(reg1_07, prepro_batch4));
+    add(pic, drawLineBatch2Reg(data_batch5, reg1_18));
+    
+    //lines reg2
+    add(pic, drawLineBatch2Reg(prepro_batch1, reg2_11));
+    add(pic, drawLineBottomReg2Batch(reg2_11, copyh2d_batch1));
+    add(pic, drawLineBottomReg2Batch(reg2_13, copyh2d_batch2));
+    add(pic, drawLineBatch2Reg(prepro_batch2, reg2_13));
+    add(pic, drawLineBatch2Reg(prepro_batch3, reg2_15));
+    add(pic, drawLineBottomReg2Batch(reg2_16, copyh2d_batch3));
+    add(pic, drawLineBatch2Reg(copyh2d_batch3, reg3_04));
+    //lines reg3
+    add(pic, drawLineBatch2Reg(copyh2d_batch1, reg3_11));
+    add(pic,drawLineBottomReg2Batch(reg3_11, train_batch1, 4));
+    add(pic, drawLineBatch2Reg(copyh2d_batch2, reg3_02));
+    
+    path reg303ToTrain2 = point(reg3_03, E){right}..shift(0, -tinyPadding)*midpoint(point(reg3_13,SE)--point(reg3_14,SW)).. tension 2 ..{down}point(train_batch2,N);
+    draw(pic, reg303ToTrain2, Arrow);
     return pic;
 }
 
@@ -317,10 +374,10 @@ picture getLegend()
 picture mainPic = getMainPic();
 add(mainPic);
 
-pair ptCornerUp = max(mainPic, true);
+// pair ptCornerUp = max(mainPic, ture);
 //dot(ptCornerUp);
 
-picture legendPic = shift(0, -1)*shift(ptCornerUp-2.5xshiftUnit)*getLegend();
+picture legendPic = getLegend();
 add(legendPic);
 
 
