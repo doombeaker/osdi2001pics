@@ -286,7 +286,7 @@ picture getBoxPic()
 }
 
 picture logicalPic = getLogicalPic();
-add(logicalPic.fit(), (0,0), E);
+add(logicalPic.fit(), (0,0), W);
 
 picture boxPic = getBoxPic();
-add(boxPic.fit(), (0,0), 10W);
+add(boxPic.fit(), (0,0), 10E);
