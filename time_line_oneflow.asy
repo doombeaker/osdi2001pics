@@ -10,6 +10,14 @@ pen fillFree = white;
 
 real tinyPadding = 0.15;
 
+// 各种 batch 的样式长度设置
+real batchWidthUnit = xshiftUnit; //dataloader
+real preproWidth = 2.8*xshiftUnit; //preprocess 
+real copyWidth = 0.7*xshiftUnit; //copyh2d
+real trainWidth = 6.5*xshiftUnit; //train
+
+pen Dotted(pen p=currentpen) {return linetype(new real[] {0,3})+2*linewidth(p);}   
+
 picture getBatch(real width, pen pstyle = defaultpen, pen pbg = lightgray)
 {
     picture pic;
@@ -84,7 +92,6 @@ picture getMainPic()
     picture pic;
 
     //draw dataloading batches
-    real batchWidthUnit = xshiftUnit;
     real yshiftUnit = 1.2xshiftUnit;
     real shiftBatch1padding = xshiftUnit+tinyPadding;
     picture dataloadingPic;
@@ -110,7 +117,6 @@ picture getMainPic()
     add(pic, reg1_01);
     add(pic, fillRegBox(reg1_11, fillBusy));
 
-    real preproWidth = 2.8*xshiftUnit;
     real shiftYValue = -yshiftUnit;
     picture prepro_batch1 = shift(point(data_batch2, W).x, shiftYValue)*getBatch(preproWidth, dotted);
     add(pic, prepro_batch1);
@@ -133,7 +139,6 @@ picture getMainPic()
     picture prepro_batch2 = shift(point(data_batch3, W).x, shiftYValue)*getBatch(preproWidth, dotted);
     add(pic, prepro_batch2);
 
-    real copyWidth = 0.7*xshiftUnit;
     real copyYValue =  -2*yshiftUnit;
 
     add(pic, shift(0, -yshiftUnit)*reg1_00);
@@ -163,9 +168,7 @@ picture getMainPic()
     add(pic, fillRegBox(reg3_01, fillFree));
     
     //train batch1
-    real trainWidth = 6.5*xshiftUnit;
-    real trainYValue =  -3*yshiftUnit; 
-    pen Dotted(pen p=currentpen) {return linetype(new real[] {0,3})+2*linewidth(p);}    
+    real trainYValue =  -3*yshiftUnit;  
     pair ptTrainBatch1 = (point(copyh2d_batch1, E).x+tinyPadding, trainYValue);
     picture train_batch1 = shift(ptTrainBatch1)*getBatch(trainWidth, Dotted, gray);
     add(pic, train_batch1);
@@ -264,7 +267,63 @@ picture getMainPic()
     return pic;
 }
 
-add(getMainPic());
+picture getLegend()
+{
+    picture pic;
+    real d = 0.2;
+    pair legendYShift = (0, -0.1-d);
+    picture freeBlock = blockBox(d,d);
+    freeBlock = fillRegBox(freeBlock, fillFree);
+    label(freeBlock, "Free", point(freeBlock, SW), N+4E, fontsize(8pt));
+    add(pic, freeBlock);   
+    
+    picture busyBlock = blockBox(d,d);
+    busyBlock = shift(legendYShift)*fillRegBox(busyBlock, fillBusy);
+    label(busyBlock, "Busy", point(busyBlock, SW), N+4E, fontsize(8pt));
+    add(pic, busyBlock);
+
+    picture readyBlock = blockBox(d,d);
+    readyBlock = shift(2legendYShift)*fillRegBox(readyBlock, fillReady);
+    label(readyBlock, "Ready", point(readyBlock, SW), N+4E, fontsize(8pt));
+    add(pic, readyBlock);
+
+    //batches
+    real yShift = -1.8;
+    real legendBatchUnit = 1.1;
+
+    picture dataLoader = getBatch(legendBatchUnit);
+    dataLoader = shift(0, yShift)*shift(point(freeBlock, W))*dataLoader;
+    label(dataLoader, "Dataload", point(dataLoader, E), 4E, fontsize(8pt));
+    add(pic, dataLoader);
+
+    picture preProcess = getBatch(legendBatchUnit, dotted);
+    preProcess = shift(0, -0.3)*shift(point(dataLoader, W))*preProcess;
+    label(preProcess, "Preprocess", point(preProcess, E), 4E, fontsize(8pt));
+    add(pic, preProcess);
+
+    picture copyH2D = getBatch(legendBatchUnit, solid, black);
+    copyH2D = shift(0, -0.3)*shift(point(preProcess, W))*copyH2D;
+    label(copyH2D, "CopyH2D", point(copyH2D, E), 4E, fontsize(8pt));
+    add(pic, copyH2D);
+
+    picture training = getBatch(legendBatchUnit, Dotted, gray);
+    training = shift(0, -0.3)*shift(point(copyH2D, W))*training;
+    label(training, "Train", point(training, E), 4E, fontsize(8pt));
+    add(pic, training);
+
+    return pic;
+}
+
+picture mainPic = getMainPic();
+add(mainPic);
+
+pair ptCornerUp = max(mainPic, true);
+//dot(ptCornerUp);
+
+picture legendPic = shift(0, -1)*shift(ptCornerUp-2.5xshiftUnit)*getLegend();
+add(legendPic);
+
+
 
 
 // add(legend());
