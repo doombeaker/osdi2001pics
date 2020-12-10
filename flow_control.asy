@@ -63,7 +63,7 @@ picture getTime1Pic()
     draw(mainPic, line, Arrow);
 
     //label title
-    label(mainPic, "$time_1$", (point(actor1, N).x, point(r11, N).y), down);
+    label(mainPic, "$time_0$", (point(actor1, N).x, point(r11, N).y), down);
     return mainPic;
 }
 
@@ -112,7 +112,7 @@ picture getTime2Pic()
     draw(mainPic, line3, Arrow);
 
     //label title
-    label(mainPic, "$time_2$", (point(actor1, N).x, point(r11, N).y), down);
+    label(mainPic, "$time_1$", (point(actor1, N).x, point(r11, N).y), down);
     return mainPic;
 }
 
