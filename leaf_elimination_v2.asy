@@ -5,7 +5,7 @@ defaultpen(fontsize(24pt));
 
 real rsize = 0.7;
 real shiftUnit = 3;
-pen fillblockpen = rgb(156,194,230);
+pen fillblockpen = lightgray;
 pen notexistpen = dashed;
 
 path getCirclePath(pair pos)
@@ -132,11 +132,10 @@ picture getResultPicture()
     return pic;
 }
 
-
-picture leaf1Pic = getLeaf1Picture();
+picture leaf1Pic = shift(shiftUnit, 1.1*shiftUnit)*getLeaf1Picture();
 add(leaf1Pic);
 picture leaf2Pic = shift(2shiftUnit, 1.1shiftUnit)*getLeaf2Picture();
 add(leaf2Pic);
-picture resultPic = shift(3shiftUnit, 1.1shiftUnit/2)*getResultPicture();
+picture resultPic = shift(3.5shiftUnit, 1.1shiftUnit)*getResultPicture();
 add(resultPic);
 draw(shift(0, -0.35)*(shift(-0.5shiftUnit, 0)*point(resultPic,W)--point(resultPic,W)), Arrow);
