@@ -84,7 +84,7 @@ picture getMainPic()
     label(pic, "5. $r_{7}$", midpoint(BWActorTobuffer3), E);
     label(pic, "4. $r_{10}$", midpoint(buffer2ToUpdate), N);
     label(pic, "6. $r_{11}$", midpoint(updateTobuffer3));
-    label(pic, "4. gradient", midpoint(backToUpdate), S);
+    label(pic, "4. G_{10}", midpoint(backToUpdate), S);
 
     picture legendPic;
     draw(legendPic, (0,0)--(1,0), reqStyle);
