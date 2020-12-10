@@ -104,7 +104,6 @@ void FillBlocksFromRight(picture pic, picture[] blocks, int count = blocks.lengt
 {
     for(int i = 0; i<count;++i)
     {
-        write(blocks.length-i);
         picture blockItem = fillBoxFull(blocks[blocks.length-1-i], fillpen, patternpen);
         add(pic, blockItem);
     }
@@ -232,13 +231,13 @@ picture getLogical2Pic()
     return pic;
 }
 
-picture getPhy1Pic()
+picture getPhyPic()
 {
     picture pic;
     size(pic, 0, 40cm);
     unitsize(pic, 0, 30);
 
-    picture dev0_inPic = blockRoundBox("$in$");
+    picture dev0_inPic = blockRoundBox("$in_0$");
     add(pic, dev0_inPic);
 
     picture dev0_forwardPic = shift(0, -yshiftUnit)*ellipseNode("forward");
@@ -291,6 +290,7 @@ picture getPhy1Pic()
     draw(pic, midpoint(point(dev0_psyAry[3], SE)--point(dev0_psyAry[4],SW))--point(dev0_castPic,N), Arrow);
     draw(pic, point(dev0_castPic, S){down}..{down}midpoint(point(dev0_psyAryFp16[3], NE)--point(dev0_psyAryFp16[4], NW)), Arrow);
 
+
     //draw boxes
     real dev0_vleft = point(dev0_forwardPic, W).x -2tinyPadding;
     real dev0_vright = point(dev0_psyAry[7], E).x + 2tinyPadding;
@@ -300,11 +300,11 @@ picture getPhy1Pic()
     label(pic, "Device 0", (dev0_vright, dev0_vtop), NW);
 
 //------------------device 1--------
-    real dev1_device1Shift = 8xshiftUnit;
+    real dev1_device1Shift = 7.65xshiftUnit;
     real w = size(pic, true).x;
     transform t = shift(dev1_device1Shift, 0);
 
-    picture dev1_inPic = t*blockRoundBox("$in$");
+    picture dev1_inPic = t*blockRoundBox("$in_1$");
     add(pic, dev1_inPic);
 
     picture dev1_forwardPic = t*shift(0, -yshiftUnit)*ellipseNode("forward~broadcast");
@@ -366,16 +366,50 @@ picture getPhy1Pic()
     real dev1_vbottom = point(dev1_lossPic, S).y - tinyPadding;
     draw(pic, box((dev1_vleft, dev1_vbottom), (dev1_vright, dev1_vtop))); 
     label(pic, "Device 1", (dev1_vleft, dev1_vtop), NE);
+
+    //draw boxing node
+    pair p1 = point(dev0_psyAryFp16[7], SE);
+    pair p2 = point(dev0_boxingFp16[7], NE);
+    pair p3 = point(dev1_psyAryFp16[0], SW);
+    pair p4 = point(dev1_boxingFp16[0], NW);
+    picture boxingPic = shift(midpoint(p1--p2--p3--p4))*blockRoundBox("boxing", lightgray);
+    add(pic, boxingPic);
+
+    //lines about boxing
+    draw(pic, midpoint(point(dev0_psyAryFp16[3], SE)--point(dev0_psyAryFp16[4], SW)){down}..{right}point(boxingPic,W), Arrow);
+    draw(pic, point(boxingPic,W){left}..shift(-1.1xshiftUnit,0)*point(boxingPic,W)..{NW}point(dev0_forwardPic, E), Arrow);
+    draw(pic, midpoint(point(dev1_psyAryFp16[3], SE)--point(dev1_psyAryFp16[4], SW)){down}..{left}point(boxingPic,E), Arrow);
+    draw(pic, point(boxingPic,E){right}..shift(1.1xshiftUnit,0)*point(boxingPic,E)..{NE}point(dev1_forwardPic, W), Arrow);
+
+    //physical data
     return pic;
 }
 
-// picture logicalPic1 = getLogical1Pic();
-// logicalPic1 = shift(-min(logicalPic1, true))*logicalPic1;
-// add(logicalPic1);
-// picture logicalPic2 = getLogical2Pic();
-// logicalPic2 = shift(max(logicalPic1,true).x,0)*shift(-min(logicalPic2,true))*logicalPic2;
-// add(logicalPic2);
+picture logicalPic1 = getLogical1Pic();
+logicalPic1 = shift(-min(logicalPic1, true))*logicalPic1;
+add(logicalPic1);
+picture logicalPic2 = getLogical2Pic();
+logicalPic2 = shift(max(logicalPic1,true).x,0)*shift(-min(logicalPic2,true))*logicalPic2;
+add(logicalPic2);
 
-picture phyPic1 = getPhy1Pic();
-add(phyPic1);
+picture phyPic = getPhyPic();
+picture phyPic = shift(max(currentpicture, true).x+3*tinyPadding,0)*shift(-min(phyPic,true))*phyPic;
+add(phyPic);
 
+//physical data
+pair ptPhy = point(phyPic, N);
+//dot(ptPhy, red);
+picture[] phyFp32Ary;
+
+for(int i = 0; i<8;++i)
+{
+    picture blockItem = shift(ptPhy)*shift(-1.05xshiftUnit + i*(bunit+tinyPadding), 15*tinyPadding)*getRect(white);
+    phyFp32Ary.push(blockItem);
+    add(blockItem);
+}
+FillBlocks(currentpicture, phyFp32Ary, 4, fillblockpen);
+FillBlocksFromRight(currentpicture, phyFp32Ary, 4, fillblockpen, pattern("hatch"));
+
+pair ptPhyAryCenter = midpoint(point(phyFp32Ary[3],SE)--point(phyFp32Ary[4],SW));
+draw(ptPhyAryCenter{down}.. tension 2 ..{SW}shift(-2xshiftUnit,0)*ptPhy, Arrow);
+draw(ptPhyAryCenter{down}.. tension 2 ..{SE}shift(2xshiftUnit,0)*ptPhy, Arrow);
