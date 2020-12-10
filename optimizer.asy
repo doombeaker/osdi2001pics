@@ -185,8 +185,9 @@ picture getLogical2Pic()
     picture inPic = blockRoundBox("$in$");
     add(pic, inPic);
 
-    picture forwardPic = shift(0, -yshiftUnit)*ellipseNode("forward~broadcast");
+    picture forwardPic = shift(0, -yshiftUnit)*ellipseNode("forward");
     add(pic,forwardPic);
+    label(pic, "broadcast", point(forwardPic, S), SW);
 
     picture lossPic = shift(0, -2*yshiftUnit)*blockRoundBox("$loss$");
     add(pic, lossPic);
@@ -194,12 +195,12 @@ picture getLogical2Pic()
     picture[] psyAry;
     for(int i = 0; i<8;++i)
     {
-        picture blockItem = shift(-3.5xshiftUnit-2tinyPadding + i*(bunit+tinyPadding), -2*tinyPadding)*getRect(white);
+        picture blockItem = shift(1.5xshiftUnit-2tinyPadding + i*(bunit+tinyPadding), -2*tinyPadding)*getRect(white);
         psyAry.push(blockItem);
         add(pic, blockItem);
     }
 
-    label(pic, "Params(fp32) Broadcast to Split", point(psyAry[0], N), NE, fontsize(8pt));
+    label(pic, "Params(fp32) Split", point(psyAry[0], N), NE, fontsize(8pt));
     FillBlocks(pic, psyAry, fillblockpen);
 
     real ptCastY = midpoint(point(inPic, S)--point(forwardPic, N)).y;
@@ -212,7 +213,7 @@ picture getLogical2Pic()
     draw(pic, point(inPic,S)--point(forwardPic,N), Arrow);
     draw(pic, point(forwardPic,S)--point(lossPic,N), Arrow);
     draw(pic, midpoint(point(psyAry[3], SE)--point(psyAry[4],SW))--point(castPic,N), Arrow);
-    draw(pic, point(castPic, E){right}..{right}point(forwardPic,W), Arrow);
+    draw(pic, point(castPic, W){left}..{left}point(forwardPic,E), Arrow);
 
     //draw chan boxes
     real chainLeft = point(psyAry[0], W).x -tinyPadding;
@@ -222,9 +223,9 @@ picture getLogical2Pic()
     draw(pic, box((chainLeft, chainBottom), (chainRight, chainTop)), dashed);
     label(pic, "chain", (chainLeft, chainBottom), NE);
 
-    // draw boxes
-    real vleft = point(psyAry[0], W).x -2tinyPadding;
-    real vright = point(lossPic, E).x + 2tinyPadding;
+    //draw boxes
+    real vleft = point(forwardPic, W).x -2tinyPadding;
+    real vright = point(psyAry[7], E).x + 2tinyPadding;
     real vtop = point(inPic, N).y + tinyPadding;
     real vbottom = point(lossPic, S).y - tinyPadding;
     draw(pic, box((vleft, vbottom), (vright, vtop))); 
@@ -253,7 +254,7 @@ picture getPhyPic()
         dev0_psyAry.push(blockItem);
         add(pic, blockItem);
     }
-    label(pic, "Params(fp32) Broadcast", point(dev0_psyAry[0], N), NE, fontsize(8pt));
+    label(pic, "Params(fp32)", point(dev0_psyAry[0], N), NE, fontsize(8pt));
     FillBlocks(pic, dev0_psyAry, 4, fillblockpen);
 
     real dev0_ptCastY = midpoint(point(dev0_inPic, S)--point(dev0_forwardPic, N)).y;
@@ -307,7 +308,7 @@ picture getPhyPic()
     picture dev1_inPic = t*blockRoundBox("$in_1$");
     add(pic, dev1_inPic);
 
-    picture dev1_forwardPic = t*shift(0, -yshiftUnit)*ellipseNode("forward~broadcast");
+    picture dev1_forwardPic = t*shift(0, -yshiftUnit)*ellipseNode("forward");
     add(pic,dev1_forwardPic);
 
     picture dev1_lossPic = t*shift(0, -2*yshiftUnit)*blockRoundBox("$loss$");
@@ -321,7 +322,7 @@ picture getPhyPic()
         add(pic, blockItem);
     }
 
-    label(pic, "Params(fp32) Broadcast to Split", point(dev1_psyAry[0], N), NE, fontsize(8pt));
+    label(pic, "Params(fp32)", point(dev1_psyAry[0], N), NE, fontsize(8pt));
     FillBlocksFromRight(pic, dev1_psyAry, 4, fillblockpen, pattern("hatch"));
 
     real dev1_ptCastY = midpoint(point(dev1_inPic, S)--point(dev1_forwardPic, N)).y;
@@ -357,7 +358,8 @@ picture getPhyPic()
     draw(pic, point(dev1_inPic,S)--point(dev1_forwardPic,N), Arrow);
     draw(pic, point(dev1_forwardPic,S)--point(dev1_lossPic,N), Arrow);
     draw(pic, midpoint(point(dev1_psyAry[3], SE)--point(dev1_psyAry[4],SW))--point(dev1_castPic,N), Arrow);
-    draw(pic, point(dev1_castPic, E){right}..{right}point(dev1_forwardPic,W), Arrow);
+    
+    draw(pic, point(dev1_castPic, S)--(point(dev1_castPic, S).x, point(dev1_psyAryFp16[3],N).y), Arrow);
 
     // draw boxes
     real dev1_vleft = point(dev1_psyAry[0], W).x -2tinyPadding;
@@ -377,10 +379,11 @@ picture getPhyPic()
 
     //lines about boxing
     draw(pic, midpoint(point(dev0_psyAryFp16[3], SE)--point(dev0_psyAryFp16[4], SW)){down}..{right}point(boxingPic,W), Arrow);
-    draw(pic, point(boxingPic,W){left}..shift(-1.1xshiftUnit,0)*point(boxingPic,W)..{NW}point(dev0_forwardPic, E), Arrow);
     draw(pic, midpoint(point(dev1_psyAryFp16[3], SE)--point(dev1_psyAryFp16[4], SW)){down}..{left}point(boxingPic,E), Arrow);
-    draw(pic, point(boxingPic,E){right}..shift(1.1xshiftUnit,0)*point(boxingPic,E)..{NE}point(dev1_forwardPic, W), Arrow);
-
+    draw(pic, point(boxingPic, W){left}..{down}midpoint(point(dev0_boxingFp16[3], NE)--point(dev0_boxingFp16[4], NW)), Arrow);
+    draw(pic, point(boxingPic, E){right}..{down}midpoint(point(dev1_boxingFp16[3], NE)--point(dev1_boxingFp16[4], NE)), Arrow);
+    draw(pic, point(dev0_boxingFp16[0], W){left}..{left}point(dev0_forwardPic, E), Arrow);
+    draw(pic, point(dev1_boxingFp16[7], E){right}..{right}point(dev1_forwardPic, W), Arrow);
     //physical data
     return pic;
 }
@@ -389,7 +392,7 @@ picture logicalPic1 = getLogical1Pic();
 logicalPic1 = shift(-min(logicalPic1, true))*logicalPic1;
 add(logicalPic1);
 picture logicalPic2 = getLogical2Pic();
-logicalPic2 = shift(max(logicalPic1,true).x,0)*shift(-min(logicalPic2,true))*logicalPic2;
+logicalPic2 = shift(max(logicalPic1,true).x+3*tinyPadding,0)*shift(-min(logicalPic2,true))*logicalPic2;
 add(logicalPic2);
 
 picture phyPic = getPhyPic();
@@ -409,7 +412,18 @@ for(int i = 0; i<8;++i)
 }
 FillBlocks(currentpicture, phyFp32Ary, 4, fillblockpen);
 FillBlocksFromRight(currentpicture, phyFp32Ary, 4, fillblockpen, pattern("hatch"));
+label("$4\Psi$ bytes $(\Psi=8)$", point(phyFp32Ary[7], E), E);
 
 pair ptPhyAryCenter = midpoint(point(phyFp32Ary[3],SE)--point(phyFp32Ary[4],SW));
 draw(ptPhyAryCenter{down}.. tension 2 ..{SW}shift(-2xshiftUnit,0)*ptPhy, Arrow);
 draw(ptPhyAryCenter{down}.. tension 2 ..{SE}shift(2xshiftUnit,0)*ptPhy, Arrow);
+
+
+//Arrow
+path bigArrow= shift(4.8xshiftUnit, 0.5yshiftUnit)*((-2,0)--(1,0));
+label("\textbf{logical graph rewrite pass}", midpoint(bigArrow), N, fontsize(8pt));
+draw(bigArrow,  p=defaultpen+0.3mm+lightgray, Arrow);
+
+path bigArrow= shift(5xshiftUnit+4.8xshiftUnit, 0.5yshiftUnit)*((-2,0)--(1,0));
+label("\textbf{compile to physical graph}", midpoint(bigArrow), N, fontsize(8pt));
+draw(bigArrow,  p=defaultpen+0.3mm+lightgray, Arrow);
