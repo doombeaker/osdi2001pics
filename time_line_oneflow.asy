@@ -8,6 +8,9 @@ pen fillReady = rgb(156,194,230);
 pen fillBusy = lightgray;
 pen fillFree = white;
 
+write(fillReady);
+write(lightgray);
+
 real tinyPadding = 0.15;
 
 // 各种 batch 的样式长度设置
@@ -105,7 +108,7 @@ picture drawLineBottomReg2Batch(picture regPic, picture batchPic, real t=2)
 picture drawLineUpReg2Batch(picture regPic, picture batchPic)
 {
     picture pic;
-    draw(pic, point(regPic, E){down}..{down}midpoint(point(regPic, E)--point(batchPic, N)){down}..{down}point(batchPic, N),Arrow);
+    draw(pic, point(regPic, E){right}..{down}shift(-0.8xshiftUnit, 3*tinyPadding)*point(batchPic, N){down}..{down}point(batchPic, N),Arrow);
     return pic;
 }
 
@@ -376,8 +379,8 @@ add(mainPic);
 
 // pair ptCornerUp = max(mainPic, ture);
 //dot(ptCornerUp);
-
-picture legendPic = getLegend();
+pair ptCornerUp = (size(mainPic).x -6.5xshiftUnit, -3*tinyPadding);
+picture legendPic = shift(ptCornerUp)*getLegend();
 add(legendPic);
 
 
