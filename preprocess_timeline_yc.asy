@@ -394,7 +394,7 @@ picture getLegend(picture rightTopPic=currentpicture)
     return pic;
 }
 
-// picture mainPic = getMainPic();
-// add(mainPic);
+picture mainPic = getMainPic();
+add(mainPic);
 
-add(getLegend());
+// add(getLegend());
