@@ -5,3 +5,7 @@ clean.cmd
 /todolist
 /*.pdf
 *.eps
+*.pptx
+*.aux
+*.log
+test.asy
