@@ -176,7 +176,7 @@ picture getPhyPic()
     picture dev0_lossPic = shift(-3*xshiftUnit, 0)*blockRoundBox("$loss$");
     add(pic, dev0_lossPic);
 
-    picture dev0_backwordPic = shift(-3*xshiftUnit, -yshiftUnit)*blockRoundBox("$backward$");
+    picture dev0_backwordPic = shift(-3*xshiftUnit, -yshiftUnit)*ellipseNode("backward");
     add(pic, dev0_backwordPic);
 
     picture[] dev0_ParamsFp16Ary;
@@ -219,7 +219,7 @@ picture getPhyPic()
     FillHalfBlocksFromLeft(pic, dev0_grad16BoxedAry, 4, fillblockpen);
 
     pair ptCast = midpoint(point(dev0_grad16BoxedAry[3], S)--point(dev0_grad16BoxedAry[4], S))+(0, -0.25*yshiftUnit);
-    picture dev0_castPic = shift(ptCast)*blockRoundBox("$cast$");
+    picture dev0_castPic = shift(ptCast)*ellipseNode("cast");
     add(pic, dev0_castPic);
 
     picture[] dev0_grad32Ary;
@@ -248,7 +248,7 @@ picture getPhyPic()
     label(pic, "Params(fp32)", point(dev0_ParamsFp32Ary[0], N), N+E, fontsize(8pt));
 
     pair ptAdamOptimizer = (point(dev0_castPic, S).x, point(dev0_ParamsFp32Ary[0], W).y);
-    picture dev0_adamPic = shift(ptAdamOptimizer)*blockRoundBox("$Optimizer$");
+    picture dev0_adamPic = shift(ptAdamOptimizer)*ellipseNode("Optimizer");
     add(pic, dev0_adamPic);    
 
     picture[] dev0_AdamStatMAry;

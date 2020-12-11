@@ -387,7 +387,7 @@ picture getLegend(picture rightTopPic=currentpicture)
 
     for(int i = 0; i < explantion.length;++i)
     {
-        picture blockItem = shift(0, i*3)*blockBox(pens[i]);
+        picture blockItem = shift(0, i*1.2)*blockBox(pens[i]);
         add(pic, blockItem);
         label(pic, explantion[i], point(blockItem, SW), N+4E);        
     }
@@ -397,4 +397,8 @@ picture getLegend(picture rightTopPic=currentpicture)
 picture mainPic = getMainPic();
 add(mainPic);
 
-// add(getLegend());
+picture legendPic = getLegend();
+legendPic = shift(5tinyPadding, 0)*shift(point(mainPic, E))*legendPic;
+path enBox = box(point(legendPic, SW)+(-tinyPadding,-tinyPadding), shift(1.5)*point(legendPic, NE)+(tinyPadding,tinyPadding));
+draw(enBox, dashed);
+add(legendPic);
