@@ -16,8 +16,8 @@ real regPaddingBottom = 0.3;
 // 各种 batch 的样式长度设置           //对齐chengcheng的流水线batch的长度
 real batchHeight = 0.7;          
 real trainWidth = 5*xshiftUnit; //train  320
-real dataloadWidth = (80/320)*trainWidth; //dataloader  80
-real preproWidth = (120/320)*trainWidth; //preprocess 120
+real dataloadWidth = (70/320)*trainWidth; //dataloader  80
+real preproWidth = (130/320)*trainWidth; //preprocess 120
 real copyWidth = (70/320)*trainWidth; //copyh2d 60
 
 real paddingBetweenBatch = 2*d+2regPaddingBottom+batchHeight;
@@ -140,6 +140,13 @@ tagBatch getUpperBatch(tagRegs regs, string s = "", real w, real h=batchHeight, 
     return batch;
 }
 
+tagBatch getLowerBatch(tagRegs regs, string s = "", real w, real h=batchHeight, pen pfill=fillFree, pen pstyle=defaultpen)
+{
+    pair pos=point(regs._pic, SW)+(0, -regPaddingBottom-h);
+    tagBatch batch = tagBatch(s, w,h, pos, pfill, pstyle);
+    return batch;
+}
+
 picture getMainPic()
 {
     picture pic;
@@ -173,6 +180,29 @@ picture getMainPic()
     tagBatch trainBatch1 = tagBatch(copyBatch1, "Batch1", trainWidth, fillBusy);
     add(pic, trainBatch1);
 
+    tagRegs copyRegs1 = tagRegs(copyBatch1, "NW", "1", fillBusy, "", fillFree);
+    add(copyRegs1);
+
+    tagRegs copyRegs2 = tagRegs(copyBatch1, "NE");
+    add(copyRegs2);
+
+    tagRegs preProcessRegs4 = tagRegs(dataBatch3, "SE", "3", fillReady, "2", fillBusy);
+    add(preProcessRegs4);
+
+    tagBatch dataBatch4 = getUpperBatch(preProcessRegs4,"Batch4", dataloadWidth, fillReady);
+    add(dataBatch4);
+
+    tagBatch preProcessBatch3 = preProcessBatch2.getNextBatch("Batch3", fillBusy);
+    add(preProcessBatch3);
+
+    tagRegs preProcessRegs5 = tagRegs(preProcessBatch3, "NW", "3", fillBusy, "", fillFree);
+    add(preProcessRegs5);
+
+    tagRegs copyRegs3 = tagRegs(preProcessBatch2, "SE", "2", fillBusy);
+    add(copyRegs3);
+
+    tagBatch copyBatch2 = getLowerBatch(copyRegs3, "Batch2", copyWidth, fillReady);
+    add(copyBatch2);
     return pic;
 
 }
